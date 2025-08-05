@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.card-img-top:hover {
+    transform: scale(1.03);
+    transition: transform 0.3s ease;
+}
