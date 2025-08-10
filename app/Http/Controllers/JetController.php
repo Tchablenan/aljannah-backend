@@ -65,31 +65,47 @@ class JetController extends Controller
         return view('jets.edit', compact('jet'));
     }
 
-    public function update(Request $request, Jet $jet)
-    {
-        $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'modele' => 'nullable|string|max:255',
-            'capacite' => 'required|integer|min:1',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|max:8048',
-            'prix' => 'sometimes|required|numeric|min:0',
+public function update(Request $request, Jet $jet)
+{
+    // Validation des données
+    $validated = $request->validate([
+        'nom' => 'required|string|max:255',
+        'modele' => 'nullable|string|max:255',
+        'capacite' => 'required|integer|min:1',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8048', // 8MB max
+        'prix' => 'required|numeric|min:0',
+        'images' => 'nullable|array', // Champ pour les images supplémentaires
+        'images.*' => 'image|max:8048', // Assurer que chaque image est valide
+    ]);
 
-        ]);
-
-        if ($request->hasFile('image')) {
-            // Supprimer l'ancienne image si elle existe
-            if ($jet->image) {
-                Storage::disk('public')->delete($jet->image);
-            }
-
-            $validated['image'] = $request->file('image')->store('jets', 'public');
+    // Mise à jour de l'image principale
+    if ($request->hasFile('image')) {
+        // Supprimer l'ancienne image si elle existe
+        if ($jet->image) {
+            Storage::disk('public')->delete($jet->image);
         }
-
-        $jet->update($validated);
-
-        return redirect()->route('jets.index')->with('success', 'Jet mis à jour avec succès.');
+        // Stocker la nouvelle image
+        $validated['image'] = $request->file('image')->store('jets', 'public');
     }
+
+    // Traitement des images supplémentaires
+    if ($request->hasFile('images')) {
+        // Si des images supplémentaires sont envoyées
+        $images = [];
+        foreach ($request->file('images') as $image) {
+            $images[] = $image->store('jets', 'public');
+        }
+        // Mettre à jour les images supplémentaires
+        $validated['images'] = json_encode($images);
+    }
+
+    // Mettre à jour le jet avec les données validées
+    $jet->update($validated);
+
+    return redirect()->route('jets.index')->with('success', 'Jet mis à jour avec succès.');
+}
+
 
     public function destroy(Jet $jet)
     {

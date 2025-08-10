@@ -18,5 +18,9 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+                // Appelez le seeder SuperAdminSeeder pour ajouter un super administrateur
+        $this->call([
+            SuperAdminSeeder::class,
+        ]);
     }
 }
