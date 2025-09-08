@@ -15,16 +15,40 @@ class Reservation extends Model
         'email',
         'departure_location',
         'arrival_location',
-        'plane_type',
+       
         'arrival_date',
         'departure_date',
         'passengers',
         'status',
           'jet_id',
+          'message',
     ];
+
+    protected $casts = [
+        'departure_date' => 'date',
+        'arrival_date' => 'date',
+    ];
+
     public function jet()
     {
         return $this->belongsTo(Jet::class);
+    }
+
+        // Scopes
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeConfirmed($query)
+    {
+        return $query->where('status', 'confirmed');
+    }
+
+    // Accesseur pour nom complet
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 
 }

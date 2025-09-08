@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('reservations', ReservationController::class);
     Route::get('/reservations/{reservation}/pdf', [ReservationController::class, 'downloadPDF'])->name('reservations.pdf');
     Route::resource('jets', JetController::class);
+    // Dans routes/web.php
+Route::put('reservations/{reservation}', [ReservationController::class, 'updateStatus'])->name('reservations.updateStatus');
 
 });
 
