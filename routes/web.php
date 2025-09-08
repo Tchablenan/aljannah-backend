@@ -31,10 +31,17 @@ Route::middleware('auth')->group(function () {
 
     // Routes for Reservation management
     Route::resource('reservations', ReservationController::class);
+    Route::patch('reservations/{reservation}/status', [ReservationController::class, 'updateStatus'])->name('reservations.updateStatus');
+Route::get('reservations/{reservation}/confirmation', [ReservationController::class, 'confirmation'])->name('reservations.confirmation');
     Route::get('/reservations/{reservation}/pdf', [ReservationController::class, 'downloadPDF'])->name('reservations.pdf');
     Route::resource('jets', JetController::class);
     // Dans routes/web.php
 Route::put('reservations/{reservation}', [ReservationController::class, 'updateStatus'])->name('reservations.updateStatus');
+
+// Routes publiques
+Route::get('check-status', [ReservationController::class, 'checkStatusPage'])->name('reservations.check-status');
+Route::post('check-status', [ReservationController::class, 'checkStatus']);
+Route::post('reservations/{reservation}/cancel', [ReservationController::class, 'cancelReservation'])->name('reservations.cancel');
 
 });
 

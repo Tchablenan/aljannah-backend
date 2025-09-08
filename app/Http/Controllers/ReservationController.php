@@ -5,18 +5,68 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Jet;
+use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        // Récupérer toutes les réservations
-        $reservations = Reservation::paginate(10);
+        $query = Reservation::with(['jet'])->latest();
 
-        // Retourner la vue 'index' avec les données
+        // Filtrage par statut
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filtrage par période
+        if ($request->filled('period')) {
+            switch ($request->period) {
+                case 'today':
+                    $query->whereDate('departure_date', now()->toDateString());
+                    break;
+                case 'week':
+                    $query->whereBetween('departure_date', [
+                        now()->startOfWeek(),
+                        now()->endOfWeek()
+                    ]);
+                    break;
+                case 'month':
+                    $query->whereMonth('departure_date', now()->month)
+                          ->whereYear('departure_date', now()->year);
+                    break;
+                case 'upcoming':
+                    $query->where('departure_date', '>=', now()->toDateString());
+                    break;
+            }
+        }
+
+        // Recherche textuelle
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('departure_location', 'like', "%{$search}%")
+                  ->orWhere('arrival_location', 'like', "%{$search}%");
+            });
+        }
+
+        $reservations = $query->paginate(15)->withQueryString();
+
         return view('admin.reservations.index', compact('reservations'));
     }
+     /**
+
+    * Afficher le formulaire de création
+    */
+   public function create()
+   {
+        $jets = Jet::disponible()->get();
+       return view('admin.reservations.create', compact('jets'));
+   }
     /**
      * Store a newly created reservation in storage.
      */
@@ -26,6 +76,7 @@ class ReservationController extends Controller
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',    
             'departureLocation' => 'required|string|max:255',
             'arrivalLocation' => 'required|string|max:255',
             'arrivalDate' => 'required|date',
@@ -34,24 +85,23 @@ class ReservationController extends Controller
                 'jet_id' => 'nullable|exists:jets,id',
             'message' => 'nullable|string|max:1000'
         ]);
-            // Vérifier que le jet est disponible
-            $jet = Jet::disponible()->findOrFail($validated['jet_id']);
+         // Si un jet spécifique est sélectionné, vérifier la disponibilité
+         if ($validated['jet_id']) {
+            $jet = Jet::findOrFail($validated['jet_id']);
+            
+            // Vérifier la capacité
+            if ($validated['passengers'] > $jet->capacite) {
+                return redirect()->back()
+                               ->withErrors(['passengers' => "Nombre de passagers dépasse la capacité du jet ({$jet->capacite} max)"])
+                               ->withInput();
+            }
 
-                 // Vérifier la capacité
-        if ($validated['passengers'] > $jet->capacite) {
-            return response()->json([
-                'error' => 'Nombre de passagers dépasse la capacité du jet',
-                'max_capacity' => $jet->capacite
-            ], 422);
-        }
-
-        // Vérifier la disponibilité pour ces dates
-        if (!$jet->isAvailableForDates($validated['departure_date'], $validated['arrival_date'])) {
-            return response()->json([
-                'error' => 'Jet non disponible pour ces dates',
-                'jet_name' => $jet->nom
-            ], 422);
-        }
+            // Vérifier la disponibilité pour ces dates
+            if (!$this->isJetAvailable($validated['jet_id'], $validated['departure_date'], $validated['arrival_date'])) {
+                return redirect()->back()
+                               ->withErrors(['jet_id' => 'Jet non disponible pour ces dates'])
+                               ->withInput();
+            }
 
 
         // Créer la réservation dans une transaction
@@ -61,6 +111,7 @@ class ReservationController extends Controller
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
+                'phone' => $validated['phone'],
                 'departure_location' => $validated['departure_location'],
                 'arrival_location' => $validated['arrival_location'],
                 'departure_date' => $validated['departure_date'],
@@ -73,40 +124,17 @@ class ReservationController extends Controller
             DB::commit();
 
                 // Charger les relations pour la réponse
-                $reservation->load('jet:id,nom,modele,image');
-
-                return response()->json([
-                    'message' => 'Réservation créée avec succès',
-                    'reservation' => [
-                        'id' => $reservation->id,
-                        'reference' => 'REF-' . str_pad($reservation->id, 6, '0', STR_PAD_LEFT),
-                        'status' => $reservation->status,
-                        'full_name' => $reservation->full_name,
-                        'email' => $reservation->email,
-                        'departure_location' => $reservation->departure_location,
-                        'arrival_location' => $reservation->arrival_location,
-                        'departure_date' => $reservation->departure_date->format('Y-m-d'),
-                        'arrival_date' => $reservation->arrival_date->format('Y-m-d'),
-                        'passengers' => $reservation->passengers,
-                        'jet' => [
-                            'id' => $reservation->jet->id,
-                            'nom' => $reservation->jet->nom,
-                            'modele' => $reservation->jet->modele,
-                            'image_url' => $reservation->jet->image_url
-                        ],
-                        'created_at' => $reservation->created_at->format('Y-m-d H:i')
-                    ]
-                ], 201);
-    
+                return redirect()->route('reservations.show', $reservation)
+                ->with('success', 'Réservation créée avec succès !');
             } catch (\Exception $e) {
                 DB::rollback();
                 
-                return response()->json([
-                    'error' => 'Erreur lors de la création de la réservation',
-                    'message' => 'Veuillez réessayer'
-                ], 500);
+                return redirect()->back()
+                               ->withErrors(['error' => 'Erreur lors de la création de la réservation'])
+                               ->withInput();
             }
         }
+    }
     /**
      * Display the specified reservation.
      */
@@ -122,33 +150,104 @@ class ReservationController extends Controller
     {
         $reservation = Reservation::with('jet:id,nom,modele,image,prix')
                                  ->findOrFail($id);
-
-        return response()->json([
-            'id' => $reservation->id,
-            'reference' => 'REF-' . str_pad($reservation->id, 6, '0', STR_PAD_LEFT),
-            'status' => $reservation->status,
-            'status_label' => $this->getStatusLabel($reservation->status),
-            'full_name' => $reservation->full_name,
-            'email' => $reservation->email,
-            'departure_location' => $reservation->departure_location,
-            'arrival_location' => $reservation->arrival_location,
-            'departure_date' => $reservation->departure_date->format('Y-m-d'),
-            'arrival_date' => $reservation->arrival_date->format('Y-m-d'),
-            'passengers' => $reservation->passengers,
-            'message' => $reservation->message,
-            'jet' => [
-                'id' => $reservation->jet->id,
-                'nom' => $reservation->jet->nom,
-                'modele' => $reservation->jet->modele,
-                'prix' => $reservation->jet->prix,
-                'image_url' => $reservation->jet->image_url
-            ],
-            'created_at' => $reservation->created_at->format('Y-m-d H:i'),
-            'updated_at' => $reservation->updated_at->format('Y-m-d H:i')
-        ]);
+        
+        return view('admin.reservations.show', compact('reservation'));
     }
   /**
      * Check reservation status by email and reference
+     */
+
+       /**
+     * Afficher le formulaire d'édition
+     */
+    public function edit($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $jets = Jet::disponible()->get();
+        
+        return view('admin.reservations.edit', compact('reservation', 'jets'));
+    }
+   /**
+     * Mettre à jour une réservation
+     */
+    public function update(Request $request, $id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'departure_location' => 'required|string|max:255',
+            'arrival_location' => 'required|string|max:255',
+            'departure_date' => 'required|date',
+            'arrival_date' => 'required|date|after_or_equal:departure_date',
+            'passengers' => 'required|integer|min:1|max:20',
+            'jet_id' => 'nullable|exists:jets,id',
+            'message' => 'nullable|string|max:1000',
+            'status' => 'nullable|in:pending,confirmed,cancelled,completed'
+        ]);
+
+        $reservation->update($validated);
+
+        return redirect()->route('reservations.show', $reservation)
+                       ->with('success', 'Réservation mise à jour avec succès !');
+    }
+
+        /**
+     * Mettre à jour le statut d'une réservation
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled,completed'
+        ]);
+
+        $reservation = Reservation::with('jet')->findOrFail($id);
+        $oldStatus = $reservation->status;
+        $newStatus = $request->status;
+
+        // Mettre à jour le statut
+        $reservation->update([
+            'status' => $newStatus,
+            'status_updated_at' => now(),
+        ]);
+
+        // Envoyer une notification email au client selon le nouveau statut
+        $this->sendStatusNotification($reservation, $newStatus);
+
+        // Rediriger vers la vue de confirmation avec l'action effectuée
+        return redirect()
+            ->route('reservations.confirmation', $reservation->id)
+            ->with('action', $newStatus)
+            ->with('success', $this->getSuccessMessage($newStatus));
+    }
+
+       /**
+     * Afficher la page de confirmation d'action
+     */
+    public function confirmation($id)
+    {
+        $reservation = Reservation::with('jet')->findOrFail($id);
+        
+        return view('admin.reservations.confirmation', compact('reservation'));
+    }
+       /**
+     * Supprimer une réservation
+     */
+   
+
+    /**
+     * Vérifier le statut d'une réservation (page publique)
+     */
+    public function checkStatusPage()
+    {
+        return view('public.reservations.check-status');
+    }
+
+      /**
+     * Traiter la vérification de statut
      */
     public function checkStatus(Request $request)
     {
@@ -158,7 +257,8 @@ class ReservationController extends Controller
         ]);
 
         // Extraire l'ID de la référence (REF-000001 -> 1)
-        $id = (int) str_replace('REF-', '', $request->reference);
+        $referenceNumber = str_replace(['REF-', 'ref-'], '', strtolower($request->reference));
+        $id = (int) ltrim($referenceNumber, '0');
 
         $reservation = Reservation::where('id', $id)
                                  ->where('email', $request->email)
@@ -166,39 +266,62 @@ class ReservationController extends Controller
                                  ->first();
 
         if (!$reservation) {
-            return response()->json([
-                'error' => 'Réservation non trouvée',
-                'message' => 'Vérifiez votre email et référence'
-            ], 404);
+            return redirect()->back()
+                           ->withErrors(['error' => 'Réservation non trouvée. Vérifiez votre email et référence.'])
+                           ->withInput();
         }
 
-        return response()->json([
-            'found' => true,
-            'reservation' => [
-                'id' => $reservation->id,
-                'reference' => 'REF-' . str_pad($reservation->id, 6, '0', STR_PAD_LEFT),
-                'status' => $reservation->status,
-                'status_label' => $this->getStatusLabel($reservation->status),
-                'full_name' => $reservation->full_name,
-                'departure_location' => $reservation->departure_location,
-                'arrival_location' => $reservation->arrival_location,
-                'departure_date' => $reservation->departure_date->format('Y-m-d'),
-                'arrival_date' => $reservation->arrival_date->format('Y-m-d'),
-                'passengers' => $reservation->passengers,
-                'jet' => [
-                    'nom' => $reservation->jet->nom,
-                    'modele' => $reservation->jet->modele,
-                    'image_url' => $reservation->jet->image_url
-                ],
-                'created_at' => $reservation->created_at->format('Y-m-d H:i')
-            ]
+        return view('public.reservations.status', compact('reservation'));
+    }
+      /**
+     * Télécharger le PDF d'une réservation
+     */
+   /**
+ * Télécharger le PDF du ticket de réservation
+ */
+public function downloadPDF(Reservation $reservation)
+{
+    try {
+        // Charger la réservation avec ses relations
+        $reservation->load('jet');
+        
+        // Configuration du PDF
+        $pdf = Pdf::loadView('admin.reservations.ticket', compact('reservation'))
+                  ->setPaper('a4', 'portrait')
+                  ->setOptions([
+                      'dpi' => 150,
+                      'defaultFont' => 'DejaVu Sans',
+                      'isRemoteEnabled' => true,
+                      'isHtml5ParserEnabled' => true,
+                      'debugKeepTemp' => false,
+                  ]);
+        
+        // Nom du fichier
+        $filename = 'ticket_reservation_' . $reservation->id . '_' . now()->format('Y-m-d') . '.pdf';
+        
+        return $pdf->download($filename);
+        
+    } catch (\Exception $e) {
+        // Log l'erreur
+        \Log::error('Erreur génération PDF réservation: ' . $e->getMessage(), [
+            'reservation_id' => $reservation->id,
+            'trace' => $e->getTraceAsString()
         ]);
+        
+        // Retourner une erreur utilisateur
+        return redirect()->back()->with('error', 'Erreur lors de la génération du PDF. Veuillez réessayer.');
     }
-    public function downloadPDF(Reservation $reservation)
-    {
-        $pdf = Pdf::loadView('Admin.reservations.ticket', compact('reservation'));
-        return $pdf->download('ticket_reservation_' . $reservation->id . '.pdf');
-    }
+}
+
+/**
+ * Prévisualiser le ticket (pour déboguer)
+ */
+public function previewTicket(Reservation $reservation)
+{
+    $reservation->load('jet');
+    return view('admin.reservations.ticket', compact('reservation'));
+}
+
     
     /**
      * Cancel a reservation (if allowed)
@@ -214,21 +337,16 @@ class ReservationController extends Controller
                                  ->where('email', $request->email)
                                  ->whereIn('status', ['pending']) // Seulement les pending peuvent être annulées
                                  ->first();
-
         if (!$reservation) {
-            return response()->json([
-                'error' => 'Réservation non trouvée ou non annulable',
-                'message' => 'Seules les réservations en attente peuvent être annulées'
-            ], 404);
+            return redirect()->back()
+                           ->withErrors(['error' => 'Réservation non trouvée ou non annulable. Seules les réservations en attente peuvent être annulées.']);
         }
 
         // Vérifier si l'annulation est encore possible (ex: pas moins de 24h avant)
         $hoursUntilDeparture = now()->diffInHours($reservation->departure_date);
         if ($hoursUntilDeparture < 24) {
-            return response()->json([
-                'error' => 'Annulation impossible',
-                'message' => 'L\'annulation doit se faire au moins 24h avant le départ'
-            ], 422);
+            return redirect()->back()
+                           ->withErrors(['error' => 'L\'annulation doit se faire au moins 24h avant le départ.']);
         }
 
         $reservation->update([
@@ -237,11 +355,63 @@ class ReservationController extends Controller
             'cancellation_reason' => $request->reason
         ]);
 
-        return response()->json([
-            'message' => 'Réservation annulée avec succès',
-            'reservation_id' => $reservation->id,
-            'reference' => 'REF-' . str_pad($reservation->id, 6, '0', STR_PAD_LEFT)
-        ]);
+        return view('public.reservations.cancelled', compact('reservation'))
+               ->with('success', 'Réservation annulée avec succès.');
+    }
+
+    
+     /**
+     * Vérifier la disponibilité d'un jet
+     */
+    private function isJetAvailable($jetId, $departureDate, $arrivalDate)
+    {
+        $conflictingReservations = Reservation::where('jet_id', $jetId)
+            ->where('status', '!=', 'cancelled')
+            ->where(function($query) use ($departureDate, $arrivalDate) {
+                $query->whereBetween('departure_date', [$departureDate, $arrivalDate])
+                      ->orWhereBetween('arrival_date', [$departureDate, $arrivalDate])
+                      ->orWhere(function($q) use ($departureDate, $arrivalDate) {
+                          $q->where('departure_date', '<=', $departureDate)
+                            ->where('arrival_date', '>=', $arrivalDate);
+                      });
+            })
+            ->exists();
+
+        return !$conflictingReservations;
+    }
+
+    /**
+     * Envoyer une notification de changement de statut
+     */
+    private function sendStatusNotification(Reservation $reservation, $status)
+    {
+        // Logique d'envoi d'email selon le statut
+        switch ($status) {
+            case 'confirmed':
+                // Mail::to($reservation->email)->send(new ReservationConfirmed($reservation));
+                break;
+            case 'cancelled':
+                // Mail::to($reservation->email)->send(new ReservationCancelled($reservation));
+                break;
+            case 'completed':
+                // Mail::to($reservation->email)->send(new ReservationCompleted($reservation));
+                break;
+        }
+    }
+
+    /**
+     * Obtenir le message de succès selon l'action
+     */
+    private function getSuccessMessage($status)
+    {
+        $messages = [
+            'confirmed' => 'Réservation confirmée avec succès. Le client a été notifié par email.',
+            'cancelled' => 'Réservation annulée. Le client a été informé de l\'annulation.',
+            'completed' => 'Réservation marquée comme terminée.',
+            'pending' => 'Réservation remise en attente.'
+        ];
+        
+        return $messages[$status] ?? 'Statut mis à jour avec succès.';
     }
 
     /**

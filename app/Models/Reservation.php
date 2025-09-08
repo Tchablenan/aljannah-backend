@@ -13,15 +13,15 @@ class Reservation extends Model
         'first_name',
         'last_name',
         'email',
+        'phone', 
         'departure_location',
         'arrival_location',
-       
         'arrival_date',
         'departure_date',
         'passengers',
         'status',
-          'jet_id',
-          'message',
+        'jet_id',
+        'message',
     ];
 
     protected $casts = [
