@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use Illuminate\Http\Request;
 use App\Models\Jet;
 use App\Http\Controllers\Controller;
 
@@ -109,7 +109,8 @@ class JetApiController extends Controller
     public function checkAvailability(Request $request, $id)
     {
         $request->validate([
-            'departure_date' => 'required|date|after:today',
+            
+           'departure_date' => 'required|date|after_or_equal:today',
             'arrival_date' => 'required|date|after:departure_date'
         ]);
 

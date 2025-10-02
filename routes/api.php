@@ -4,6 +4,8 @@ use App\Http\Controllers\ReservationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\JetApiController;
+use App\Http\Controllers\Api\ReservationApiController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,6 +38,21 @@ Route::middleware('api')->group(function () {
 
     Route::get('/jets', [JetApiController::class, 'index']);
     Route::get('/jets/{id}', [JetApiController::class, 'show']);
+
+    Route::prefix('jets')->group(function () {
+        Route::get('/', [JetApiController::class, 'index']);
+        Route::get('/search', [JetApiController::class, 'search']);
+        Route::get('/categories', [JetApiController::class, 'categories']);
+        Route::get('/price-range', [JetApiController::class, 'priceRange']);
+        Route::get('/{id}', [JetApiController::class, 'show']);
+        Route::post('/{id}/check-availability', [JetApiController::class, 'checkAvailability']);
+});
+
+Route::prefix('reservations')->group(function () {
+    Route::post('/', [ReservationApiController::class, 'store']);
+    Route::get('/{id}/status', [ReservationApiController::class, 'checkStatus']);
+});
+    
 
 });
 

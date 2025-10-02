@@ -110,7 +110,7 @@
                     </div>
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center mb-2">
-                            <span class="fs-2hx fw-bolder text-gray-800 me-2">{{ number_format($kpis['estimated_revenue']['value'], 0, ',', ' ') }}€</span>
+                            <span class="fs-2hx fw-bolder text-gray-800 me-2">{{ number_format($kpis['estimated_revenue']['value'], 0, ',', ' ') }}GH₵</span>
                         </div>
                         <span class="text-muted fw-bold fs-6">Revenus Estimés ce Mois</span>
                     </div>

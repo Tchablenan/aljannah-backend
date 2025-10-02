@@ -69,6 +69,32 @@ class Jet extends Model
         return [];
     }
 
+    // Dans App\Models\Jet.php, ajoutez cette méthode
+
+    public function getAllImages()
+    {
+        $allImages = [];
+        
+        // Ajouter l'image principale si elle existe
+        if ($this->image) {
+            $allImages[] = [
+                'url' => $this->image_url,
+                'is_primary' => true
+            ];
+        }
+        
+        // Ajouter les images supplémentaires
+        if ($this->images) {
+            foreach ($this->images_urls as $url) {
+                $allImages[] = [
+                    'url' => $url,
+                    'is_primary' => false
+                ];
+            }
+        }
+        
+        return $allImages;
+    }
     // Méthodes métier
     public function isAvailableForDates($departure_date, $arrival_date)
     {
