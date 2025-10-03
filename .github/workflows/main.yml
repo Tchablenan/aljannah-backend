@@ -72,4 +72,9 @@ jobs:
             **/.git*
             **/.github/**
             **/node_modules/**
-            **/tests/**
+            vendor/**                # <— on n’upload plus vendor
+            tests/**
+            storage/logs/**
+            storage/framework/sessions/**
+            storage/framework/testing/**
+            bootstrap/cache/*.php  
