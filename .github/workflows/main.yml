@@ -65,7 +65,7 @@ jobs:
           server:   ${{ secrets.FTP_SERVER }}       # ex: 82.29.186.100
           username: ${{ secrets.FTP_USERNAME }}     # ex: u800484123.aljannahjet.com
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftp
           port: 21
           timeout: 600000
           state-name: backend-ftp-state
