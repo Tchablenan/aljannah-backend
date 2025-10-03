@@ -1,0 +1,64 @@
+name: Deploy Backend (Laravel) to Hostinger
+
+on:
+  push:
+    branches: [ main ]     # adapte si ta branche par défaut n'est pas main
+  workflow_dispatch:       # permet de lancer manuellement
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Récupérer le code
+      - uses: actions/checkout@v4
+
+      # 2) Préparer PHP pour composer / artisan
+      - name: Use PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          extensions: mbstring, pdo, mysql, bcmath, ctype, fileinfo, json, openssl, tokenizer, xml, curl
+
+      # 3) Écrire le .env depuis le secret multi-ligne LARAVEL_ENV
+      - name: Write .env from secret
+        run: echo "${{ secrets.LARAVEL_ENV }}" > .env
+
+      # 4) Installer les dépendances PHP (prod)
+      - name: Install composer deps
+        run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+
+      # 5) Générer la clé si absente + optimiser
+      - name: Optimize Laravel
+        run: |
+          if ! grep -q '^APP_KEY=base64' .env; then php artisan key:generate --force; fi
+          php artisan config:cache
+          php artisan route:cache || true
+          php artisan view:cache  || true
+
+      # --- (Optionnel) si ton backoffice compile du CSS/JS avec Vite ---
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      # - name: Build assets
+      #   run: |
+      #     npm ci
+      #     npm run build
+      # -----------------------------------------------------------------
+
+      # 6) Déployer par FTP sur Hostinger
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server:   ${{ secrets.FTP_SERVER }}       # ex: 82.29.186.100
+          username: ${{ secrets.FTP_USERNAME }}     # ex: u800484123.aljannahjet.com
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          local-dir: ./                              # racine du projet Laravel
+          server-dir: public_html/admin/             # dépose TOUT le projet ici (webroot = /public)
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/node_modules/**
+            **/tests/**
