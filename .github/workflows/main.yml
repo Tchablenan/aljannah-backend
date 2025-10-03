@@ -23,7 +23,7 @@ jobs:
 
       # 3) Écrire le .env depuis le secret multi-ligne LARAVEL_ENV
       - name: Write .env
-        working-directory: ./admin   # adapte si ton Laravel est ailleurs
+        working-directory: .   # adapte si ton Laravel est ailleurs
         run: |
           # on écrase puis on écrit .env à partir du secret tel quel (quotes, newlines conservés)
           rm -f .env
