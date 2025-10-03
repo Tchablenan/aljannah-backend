@@ -22,8 +22,19 @@ jobs:
           extensions: mbstring, pdo, mysql, bcmath, ctype, fileinfo, json, openssl, tokenizer, xml, curl
 
       # 3) Écrire le .env depuis le secret multi-ligne LARAVEL_ENV
-      - name: Write .env from secret
-        run: echo "${{ secrets.LARAVEL_ENV }}" > .env
+      - name: Write .env
+        working-directory: ./admin   # adapte si ton Laravel est ailleurs
+        run: |
+          # on écrase puis on écrit .env à partir du secret tel quel (quotes, newlines conservés)
+          rm -f .env
+          cat <<'ENV' > .env
+          ${{ secrets.LARAVEL_ENV }}
+          ENV
+      
+          # petit check non intrusif (ne montre pas les valeurs)
+          echo "First lines of .env written:"
+          sed -n '1,10p' .env | sed 's/=.*/=[REDACTED]/'
+
 
       # 4) Installer les dépendances PHP (prod)
       - name: Install composer deps
