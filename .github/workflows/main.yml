@@ -65,8 +65,11 @@ jobs:
           server:   ${{ secrets.FTP_SERVER }}       # ex: 82.29.186.100
           username: ${{ secrets.FTP_USERNAME }}     # ex: u800484123.aljannahjet.com
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          local-dir: ./                              # racine du projet Laravel
+          protocol: ftps
+          port: 21
+          timeout: 600000
+          state-name: backend-ftp-state
+          local-dir: .                              # racine du projet Laravel
           server-dir: public_html/admin/             # dépose TOUT le projet ici (webroot = /public)
           exclude: |
             **/.git*
