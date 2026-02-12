@@ -117,7 +117,7 @@
                             <!--begin::Details item-->
                             <!--begin::Details item-->
                             <div class="fw-bolder mt-5">Prix par heure</div>
-                            <div class="text-gray-600">{{ number_format($jet->prix, 0, ',', ' ') }}€</div>
+                            <div class="text-gray-600">$ {{ number_format($jet->prix, 0, ',', ' ') }}</div>
                             <!--begin::Details item-->
                             @if($jet->localisation)
                                 <!--begin::Details item-->
@@ -314,7 +314,7 @@
                                     <!--end::Table head-->
                                     <!--begin::Table body-->
                                     <tbody class="fs-6 fw-bold text-gray-600">
-                                        @forelse($jet->reservations()->latest()->take(10)->get() as $reservation)
+                                        @forelse ($jet->reservations()->latest()->take(10)->get() as $reservation)
                                             <tr>
                                                 <!--begin::Client-->
                                                 <td>{{ $reservation->first_name }} {{ $reservation->last_name }}</td>

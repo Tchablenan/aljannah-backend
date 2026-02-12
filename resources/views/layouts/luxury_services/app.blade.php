@@ -39,13 +39,13 @@
         <div class="page d-flex flex-row flex-column-fluid">
             
             <!-- Sidebar -->
-            @include('layouts.luxery_services.sidebar')
+            @include('layouts.luxury_services.sidebar')
             
             <!--begin::Wrapper-->
             <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
                 
                 <!-- Header -->
-                @include('layouts.luxery_services.header')
+                @include('layouts.luxury_services.header')
                 
                 <!--begin::Content-->
                 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">

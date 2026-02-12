@@ -7,8 +7,7 @@
             <div class="btn btn-icon btn-active-light-primary w-30px h-30px w-md-40px h-md-40px"
                 id="kt_aside_mobile_toggle">
                 <span class="svg-icon svg-icon-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M21 7H3C2.4 7 2 6.6 2 6V4C2 3.4 2.4 3 3 3H21C21.6 3 22 3.4 22 4V6C22 6.6 21.6 7 21 7Z"
                             fill="black" />
                         <path opacity="0.3"
@@ -23,7 +22,7 @@
         <!--begin::Mobile logo-->
         <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
             <a href="{{ route('dashboard') }}" class="d-lg-none">
-                <img alt="Logo" src="{{ asset('assets/media/logos/logo-2.svg') }}" class="h-30px" />
+                <img alt="Logo" src="{{ asset('assets/media/logos/aljannah-logo.jpg') }}" class="h-30px" />
             </a>
         </div>
         <!--end::Mobile logo-->
@@ -61,11 +60,11 @@
                                 class="menu-link py-3 {{ request()->routeIs('reservations.*') ? 'active' : '' }}">
                                 <span class="menu-title">Réservations</span>
                                 @php
-                                    $pendingCount = \App\Models\Reservation::where('status', 'pending')->count();
+                                $pendingCount = \App\Models\Reservation::where('status', 'pending')->count();
                                 @endphp
                                 @if ($pendingCount > 0)
-                                    <span
-                                        class="badge badge-sm badge-circle badge-light-warning ms-2">{{ $pendingCount }}</span>
+                                <span class="badge badge-sm badge-circle badge-light-warning ms-2">{{ $pendingCount
+                                    }}</span>
                                 @endif
                             </a>
                         </div>
@@ -75,11 +74,11 @@
                                 class="menu-link py-3 {{ request()->routeIs('admin.luxury.*') ? 'active' : '' }}">
                                 <span class="menu-title">Conciergerie de Luxe</span>
                                 @php
-                                    $luxuryRequestsCount = \App\Models\LuxuryService::where('actif', false)->count();
+                                $luxuryRequestsCount = \App\Models\LuxuryService::where('actif', false)->count();
                                 @endphp
                                 @if ($luxuryRequestsCount > 0)
-                                    <span
-                                        class="badge badge-sm badge-circle badge-light-info ms-2">{{ $luxuryRequestsCount }}</span>
+                                <span class="badge badge-sm badge-circle badge-light-info ms-2">{{ $luxuryRequestsCount
+                                    }}</span>
                                 @endif
                             </a>
                         </div>
@@ -116,11 +115,12 @@
                             </svg>
                         </span>
                         @php
-                            $totalPending = \App\Models\Reservation::where('status', 'pending')->count();
+                        $totalPending = \App\Models\Reservation::where('status', 'pending')->count();
                         @endphp
                         @if ($totalPending > 0)
-                            <span
-                                class="position-absolute badge badge-sm badge-circle badge-light-danger top-0 start-100 translate-middle">{{ $totalPending }}</span>
+                        <span
+                            class="position-absolute badge badge-sm badge-circle badge-light-danger top-0 start-100 translate-middle">{{
+                            $totalPending }}</span>
                         @endif
                     </div>
                     <!--begin::Menu-->
@@ -129,35 +129,35 @@
                             style="background-image:url('{{ asset('assets/media/misc/menu-header-bg.jpg') }}')">
                             <h3 class="text-white fw-bold px-9 mt-10 mb-6">Notifications
                                 @if ($totalPending > 0)
-                                    <span class="fs-8 opacity-75 ps-3">{{ $totalPending }} nouvelles</span>
+                                <span class="fs-8 opacity-75 ps-3">{{ $totalPending }} nouvelles</span>
                                 @endif
                             </h3>
                         </div>
                         <div class="scroll-y mh-325px my-5 px-8">
-                            @forelse(\App\Models\Reservation::where('status', 'pending')->latest()->take(5)->get() as $notification)
-                                <div class="d-flex flex-stack py-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="symbol symbol-35px me-4">
-                                            <span class="symbol-label bg-light-primary">
-                                                <i class="fas fa-calendar-check text-primary"></i>
-                                            </span>
-                                        </div>
-                                        <div class="mb-0 me-2">
-                                            <a href="{{ route('reservations.show', $notification) }}"
-                                                class="fs-6 text-gray-800 text-hover-primary fw-bolder">
-                                                Nouvelle réservation
-                                            </a>
-                                            <div class="text-gray-400 fs-7">{{ $notification->full_name }} -
-                                                {{ $notification->departure_location }}</div>
-                                        </div>
+                            @forelse (\App\Models\Reservation::where("status", "pending")->latest()->take(5)->get() as $notification)
+                            <div class="d-flex flex-stack py-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="symbol symbol-35px me-4">
+                                        <span class="symbol-label bg-light-primary">
+                                            <i class="fas fa-calendar-check text-primary"></i>
+                                        </span>
                                     </div>
-                                    <span
-                                        class="badge badge-light fs-8">{{ $notification->created_at->diffForHumans() }}</span>
+                                    <div class="mb-0 me-2">
+                                        <a href="{{ route('reservations.show', $notification) }}"
+                                            class="fs-6 text-gray-800 text-hover-primary fw-bolder">
+                                            Nouvelle réservation
+                                        </a>
+                                        <div class="text-gray-400 fs-7">{{ $notification->full_name }} -
+                                            {{ $notification->departure_location }}</div>
+                                    </div>
                                 </div>
+                                <span class="badge badge-light fs-8">{{ $notification->created_at->diffForHumans()
+                                    }}</span>
+                            </div>
                             @empty
-                                <div class="text-center py-10">
-                                    <span class="text-gray-400">Aucune notification</span>
-                                </div>
+                            <div class="text-center py-10">
+                                <span class="text-gray-400">Aucune notification</span>
+                            </div>
                             @endforelse
                         </div>
                         <div class="py-3 text-center border-top">
@@ -165,10 +165,10 @@
                                 class="btn btn-color-gray-600 btn-active-color-primary">
                                 Voir toutes les réservations
                                 <span class="svg-icon svg-icon-5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none">
-                                        <rect opacity="0.5" x="18" y="13" width="13" height="2"
-                                            rx="1" transform="rotate(-180 18 13)" fill="black" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1"
+                                            transform="rotate(-180 18 13)" fill="black" />
                                         <path
                                             d="M15.4343 12.5657L11.25 16.75C10.8358 17.1642 10.8358 17.8358 11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25L18.2929 12.7071C18.6834 12.3166 18.6834 11.6834 18.2929 11.2929L12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75C10.8358 6.16421 10.8358 6.83579 11.25 7.25L15.4343 11.4343C15.7467 11.7467 15.7467 12.2533 15.4343 12.5657Z"
                                             fill="black" />
@@ -186,11 +186,11 @@
                     <div class="cursor-pointer symbol symbol-30px symbol-md-40px" data-kt-menu-trigger="click"
                         data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
                         @if (Auth::user()->avatar ?? false)
-                            <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" />
+                        <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" />
                         @else
-                            <div class="symbol-label bg-primary text-inverse-primary fw-bolder">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
+                        <div class="symbol-label bg-primary text-inverse-primary fw-bolder">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
                         @endif
                     </div>
                     <!--begin::User account menu-->
@@ -200,24 +200,24 @@
                             <div class="menu-content d-flex align-items-center px-3">
                                 <div class="symbol symbol-50px me-5">
                                     @if (Auth::user()->avatar ?? false)
-                                        <img alt="{{ Auth::user()->name }}"
-                                            src="{{ Storage::url(Auth::user()->avatar) }}" />
+                                    <img alt="{{ Auth::user()->name }}"
+                                        src="{{ Storage::url(Auth::user()->avatar) }}" />
                                     @else
-                                        <div class="symbol-label bg-primary text-inverse-primary fw-bolder fs-2">
-                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                        </div>
+                                    <div class="symbol-label bg-primary text-inverse-primary fw-bolder fs-2">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
                                     @endif
                                 </div>
                                 <div class="d-flex flex-column">
                                     <div class="fw-bolder d-flex align-items-center fs-5">
                                         {{ Auth::user()->name }}
                                         @if (Auth::user()->is_admin)
-                                            <span
-                                                class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">Admin</span>
+                                        <span
+                                            class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">Admin</span>
                                         @endif
                                     </div>
-                                    <a href="#"
-                                        class="fw-bold text-muted text-hover-primary fs-7">{{ Auth::user()->email }}</a>
+                                    <a href="#" class="fw-bold text-muted text-hover-primary fs-7">{{
+                                        Auth::user()->email }}</a>
                                 </div>
                             </div>
                         </div>

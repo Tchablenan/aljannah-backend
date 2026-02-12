@@ -295,7 +295,7 @@
                             <!--begin::Input-->
                             <div class="input-group mb-2">
                                 <input type="number" name="prix" class="form-control" placeholder="Prix par heure" value="{{ old('prix') }}" step="0.01" min="0" required />
-                                <span class="input-group-text">€</span>
+                                <span class="input-group-text">$</span>
                             </div>
                             <!--end::Input-->
                             <!--begin::Description-->

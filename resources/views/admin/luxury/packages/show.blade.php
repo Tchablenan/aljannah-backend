@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/packages/show.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', $package->nom)
 
@@ -121,14 +121,14 @@
                             @if($package->prix_total)
                             <div class="border border-gray-300 border-dashed rounded py-3 px-4 me-6 mb-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="fs-2 fw-bolder text-primary">{{ number_format($package->prix_total, 2, ',', ' ') }} €</div>
+                                    <div class="fs-2 fw-bolder text-primary">$ {{ number_format($package->prix_total, 2, ',', ' ') }}</div>
                                 </div>
                                 <div class="fw-bold fs-6 text-gray-400">Prix total</div>
                             </div>
                             @elseif($package->prix_estime)
                             <div class="border border-gray-300 border-dashed rounded py-3 px-4 me-6 mb-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="fs-2 fw-bolder text-info">~{{ number_format($package->prix_estime, 2, ',', ' ') }} €</div>
+                                    <div class="fs-2 fw-bolder text-info">~$ {{ number_format($package->prix_estime, 2, ',', ' ') }}</div>
                                 </div>
                                 <div class="fw-bold fs-6 text-gray-400">Prix estimé</div>
                             </div>
@@ -251,7 +251,7 @@
                                     </td>
                                     <td class="text-end">
                                         @if($prix !== null)
-                                            <span class="text-dark fw-bolder">{{ number_format($prix, 2, ',', ' ') }} €</span>
+                                            <span class="text-dark fw-bolder">$ {{ number_format($prix, 2, ',', ' ') }}</span>
                                         @else
                                             <span class="text-muted">Sur devis</span>
                                         @endif

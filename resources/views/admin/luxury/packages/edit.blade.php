@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/packages/edit.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', 'Modifier ' . $package->nom)
 
@@ -208,7 +208,7 @@
                         <div class="border border-dashed border-gray-300 rounded p-5">
                             <div class="text-gray-600 fw-bold mb-2">Prix calculé</div>
                             <div class="fs-2 fw-bolder text-primary" id="prix_calcule_value">
-                                {{ number_format($package->prix_total ?? $package->prix_estime ?? 0, 2, ',', ' ') }} €
+                                $ {{ number_format($package->prix_total ?? $package->prix_estime ?? 0, 2, ',', ' ') }}
                             </div>
                         </div>
                     </div>
@@ -338,7 +338,7 @@
                             <option value="{{ $service->id }}" 
                                     data-prix="{{ $service->prix_base }}" 
                                     data-type="{{ $service->type_prix }}">
-                                {{ $service->nom }} - {{ $service->prix_base ? number_format($service->prix_base, 2) . ' €' : 'Sur devis' }}
+                                {{ $service->nom }} - {{ $service->prix_base ? number_format($service->prix_base, 2) . ' $' : 'Sur devis' }}
                             </option>
                         @endforeach
                     </optgroup>
@@ -361,7 +361,7 @@
         </div>
 
         <div class="mt-3 p-3 bg-light-primary rounded">
-            <div class="text-gray-700 fw-bold">Prix du service: <span class="service-price text-primary">0,00 €</span></div>
+            <div class="text-gray-700 fw-bold">Prix du service: <span class="service-price text-primary">0,00 $</span></div>
         </div>
     </div>
 </template>
@@ -470,11 +470,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 servicePrice *= quantite;
                 
                 total += servicePrice;
-                item.querySelector('.service-price').textContent = servicePrice.toFixed(2) + ' €';
+                item.querySelector('.service-price').textContent = servicePrice.toFixed(2) + ' $';
             }
         });
         
-        document.getElementById('prix_calcule_value').textContent = total.toFixed(2).replace('.', ',') + ' €';
+        document.getElementById('prix_calcule_value').textContent = total.toFixed(2).replace('.', ',') + ' $';
     }
 
     // Personnalisations

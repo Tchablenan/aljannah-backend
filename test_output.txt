@@ -1,0 +1,47 @@
+PHP Warning:  PHP Startup: Unable to load dynamic library 'openssl' (tried: /usr/lib/php/20230831/openssl (/usr/lib/php/20230831/openssl: cannot open shared object file: No such file or directory), /usr/lib/php/20230831/openssl.so (/usr/lib/php/20230831/openssl.so: cannot open shared object file: No such file or directory)) in Unknown on line 0
+PHP Warning:  PHP Startup: Unable to load dynamic library 'pdo_mysql' (tried: /usr/lib/php/20230831/pdo_mysql (/usr/lib/php/20230831/pdo_mysql: cannot open shared object file: No such file or directory), /usr/lib/php/20230831/pdo_mysql.so (/usr/lib/php/20230831/pdo_mysql.so: undefined symbol: pdo_parse_params)) in Unknown on line 0
+PHP Warning:  Module "curl" is already loaded in Unknown on line 0
+PHP Warning:  Module "fileinfo" is already loaded in Unknown on line 0
+PHP Warning:  Module "gd" is already loaded in Unknown on line 0
+PHP Warning:  Module "intl" is already loaded in Unknown on line 0
+PHP Warning:  Module "mbstring" is already loaded in Unknown on line 0
+PHP Warning:  Module "sockets" is already loaded in Unknown on line 0
+PHP Warning:  Module "sqlite3" is already loaded in Unknown on line 0
+PHP Warning:  Module "zip" is already loaded in Unknown on line 0
+PHP Warning:  PHP Startup: Unable to load dynamic library 'openssl' (tried: /usr/lib/php/20230831/openssl (/usr/lib/php/20230831/openssl: cannot open shared object file: No such file or directory), /usr/lib/php/20230831/openssl.so (/usr/lib/php/20230831/openssl.so: cannot open shared object file: No such file or directory)) in Unknown on line 0
+PHP Warning:  PHP Startup: Unable to load dynamic library 'pdo_mysql' (tried: /usr/lib/php/20230831/pdo_mysql (/usr/lib/php/20230831/pdo_mysql: cannot open shared object file: No such file or directory), /usr/lib/php/20230831/pdo_mysql.so (/usr/lib/php/20230831/pdo_mysql.so: undefined symbol: pdo_parse_params)) in Unknown on line 0
+PHP Warning:  Module "curl" is already loaded in Unknown on line 0
+PHP Warning:  Module "fileinfo" is already loaded in Unknown on line 0
+PHP Warning:  Module "gd" is already loaded in Unknown on line 0
+PHP Warning:  Module "intl" is already loaded in Unknown on line 0
+PHP Warning:  Module "mbstring" is already loaded in Unknown on line 0
+PHP Warning:  Module "sockets" is already loaded in Unknown on line 0
+PHP Warning:  Module "sqlite3" is already loaded in Unknown on line 0
+PHP Warning:  Module "zip" is already loaded in Unknown on line 0
+
+   FAIL  Tests\Feature\ProfileTest
+  ⨯ profile page is displayed                                            1.35s  
+  ✓ profile information can be updated                                   0.03s  
+  ✓ email verification status is unchanged when the email address is un… 0.02s  
+  ✓ user can delete their account                                        0.02s  
+  ✓ correct password must be provided to delete account                  0.02s  
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProfileTest > profile page is displayed                
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+  at tests/Feature/ProfileTest.php:21
+     17▕         $response = $this
+     18▕             ->actingAs($user)
+     19▕             ->get('/profile');
+     20▕ 
+  ➜  21▕         $response->assertOk();
+     22▕     }
+     23▕ 
+     24▕     public function test_profile_information_can_be_updated(): void
+     25▕     {
+
+
+  Tests:    1 failed, 4 passed (21 assertions)
+  Duration: 1.48s
+

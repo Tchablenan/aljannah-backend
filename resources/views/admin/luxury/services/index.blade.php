@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/services/index.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', 'Services de Luxe')
 
@@ -106,7 +106,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 fw-bold">
-                    @forelse($services as $service)
+                    @forelse ($services as $service)
                     <tr>
                         <td>
                             <div class="form-check form-check-sm form-check-custom form-check-solid">
@@ -137,9 +137,9 @@
                         </td>
                         <td>
                             @if($service->prix_base)
-                                <span class="fw-bolder">{{ number_format($service->prix_base, 0, ',', ' ') }} €</span>
+                                <span class="fw-bolder">$ {{ number_format($service->prix_base, 0, ',', ' ') }}</span>
                                 @if($service->prix_max && $service->prix_max > $service->prix_base)
-                                    <span class="text-muted"> - {{ number_format($service->prix_max, 0, ',', ' ') }} €</span>
+                                    <span class="text-muted"> - $ {{ number_format($service->prix_max, 0, ',', ' ') }}</span>
                                 @endif
                             @else
                                 <span class="text-muted">Sur devis</span>
@@ -254,7 +254,7 @@
         <div class="card bg-light-info card-xl-stretch mb-xl-8">
             <div class="card-body">
                 <div class="text-gray-900 fw-bolder fs-6 mb-2">Chiffre d'Affaires</div>
-                <div class="fw-bolder text-info fs-2">{{ number_format($stats['ca_estime'] ?? 0, 0, ',', ' ') }}€</div>
+                <div class="fw-bolder text-info fs-2">$ {{ number_format($stats['ca_estime'] ?? 0, 0, ',', ' ') }}</div>
             </div>
         </div>
     </div>

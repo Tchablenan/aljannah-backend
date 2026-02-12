@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/dashboard.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', 'Dashboard Conciergerie de Luxe')
 
@@ -108,7 +108,7 @@
                     </svg>
                 </span>
                 <div class="text-gray-900 fw-bolder fs-6 mb-2">Chiffre d'Affaires</div>
-                <div class="fw-bold text-gray-400">{{ number_format($stats['revenus_estimes'] ?? 0, 0, ',', ' ') }} €</div>
+                <div class="fw-bold text-gray-400">$ {{ number_format($stats['revenus_estimes'] ?? 0, 0, ',', ' ') }}</div>
                 <div class="fw-bold text-success">Estimé</div>
             </div>
         </div>
@@ -539,7 +539,7 @@
                     </div>
                     <div class="d-flex flex-column">
                         <div class="text-dark fw-bolder fs-6">Panier Moyen</div>
-                        <div class="text-gray-400 fw-bold fs-7">{{ number_format($stats['panier_moyen'] ?? 0, 0, ',', ' ') }} €</div>
+                        <div class="text-gray-400 fw-bold fs-7">$ {{ number_format($stats['panier_moyen'] ?? 0, 0, ',', ' ') }}</div>
                     </div>
                 </div>
             </div>
@@ -645,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const element = document.querySelector(kpiSelectors[key]);
             if (element && stats[key] !== undefined) {
                 if (key === 'revenus_estimes') {
-                    element.textContent = new Intl.NumberFormat('fr-FR').format(stats[key]) + ' €';
+                    element.textContent = new Intl.NumberFormat('fr-FR').format(stats[key]) + ' $';
                 } else {
                     element.textContent = stats[key] + (key.includes('services') ? ' services' :
                                                         key.includes('packages') ? ' packages' :

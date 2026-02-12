@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/services/show.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', $service->nom)
 
@@ -99,7 +99,7 @@
                         <div class="d-flex flex-wrap justify-content-start">
                             <div class="border border-gray-300 border-dashed rounded py-3 px-4 me-6 mb-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="fs-2 fw-bolder">{{ number_format($service->prix_base, 2, ',', ' ') }} €</div>
+                                    <div class="fs-2 fw-bolder">$ {{ number_format($service->prix_base, 2, ',', ' ') }}</div>
                                 </div>
                                 <div class="fw-bold fs-6 text-gray-400">Prix de base</div>
                             </div>
@@ -152,7 +152,7 @@
                                 </td>
                                 <td class="text-end">
                                     @if(isset($option['prix_supplement']) && $option['prix_supplement'] > 0)
-                                        <span class="text-dark fw-bolder">+ {{ number_format($option['prix_supplement'], 2, ',', ' ') }} €</span>
+                                        <span class="text-dark fw-bolder">+ $ {{ number_format($option['prix_supplement'], 2, ',', ' ') }}</span>
                                     @else
                                         <span class="text-muted">Inclus</span>
                                     @endif

@@ -1,30 +1,49 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <title>{{ config('app.name', 'Aljannah') }} - Portail</title>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+
+    <!-- Global Styles Bundle -->
+    <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body id="kt_body" class="bg-body">
+    <div class="d-flex flex-column flex-root">
+        <div class="d-flex flex-column flex-column-fluid bgi-position-y-bottom position-x-center bgi-no-repeat bgi-size-contain bgi-attachment-fixed"
+            style="background-image: url({{ asset('assets/media/illustrations/sketchy-1/14.png') }})">
+            <div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20">
+                <a href="/" class="mb-12">
+                    <img alt="Logo" src="{{ asset('assets/media/logos/aljannah-logo.jpg') }}" class="h-100px" />
                 </a>
+                <div class="w-lg-500px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto">
+                    {{ $slot }}
+                </div>
             </div>
-
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
+            <!--begin::Footer-->
+            <div class="d-flex flex-center flex-column-auto p-10">
+                <div class="d-flex align-items-center fw-bold fs-6">
+                    <span class="text-muted fw-bold me-1">{{ date('Y') }}&copy;</span>
+                    <a href="#" class="text-muted text-hover-primary px-2">Aljannah</a>
+                </div>
             </div>
+            <!--end::Footer-->
         </div>
-    </body>
+    </div>
+
+    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+    <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
+</body>
+
 </html>

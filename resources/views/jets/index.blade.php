@@ -151,7 +151,7 @@
                 <!--end::Table head-->
                 <!--begin::Table body-->
                 <tbody class="text-gray-600 fw-bold">
-                    @forelse($jets as $jet)
+                    @forelse ($jets as $jet)
                         <tr>
                             <!--begin::Checkbox-->
                             <td>
@@ -217,7 +217,7 @@
                             <!--end::Category-->
                             <!--begin::Price-->
                             <td>
-                                <span class="text-gray-800 fw-bolder">{{ number_format($jet->prix, 0, ',', ' ') }}€</span>
+                                <span class="text-gray-800 fw-bolder">$ {{ number_format($jet->prix, 0, ',', ' ') }}</span>
                                 <span class="text-muted">/heure</span>
                             </td>
                             <!--end::Price-->

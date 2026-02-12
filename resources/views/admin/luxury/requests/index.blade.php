@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/requests/index.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', 'Demandes Clients')
 

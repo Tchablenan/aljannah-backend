@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/services/edit.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', 'Modifier ' . $service->nom)
 

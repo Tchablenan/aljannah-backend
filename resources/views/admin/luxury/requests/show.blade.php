@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/requests/show.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', 'Demande ' . $packageRequest->reference)
 
@@ -154,14 +154,14 @@
                                     @if($detail['sur_devis'])
                                         <span class="text-muted">Sur devis</span>
                                     @else
-                                        <span class="fw-bolder">{{ number_format($detail['prix_unitaire'], 2, ',', ' ') }} €</span>
+                                        <span class="fw-bolder">$ {{ number_format($detail['prix_unitaire'], 2, ',', ' ') }}</span>
                                     @endif
                                 </td>
                                 <td class="text-end">
                                     @if($detail['sur_devis'])
                                         <span class="text-muted">Sur devis</span>
                                     @else
-                                        <span class="fw-bolder text-primary">{{ number_format($detail['prix_total'], 2, ',', ' ') }} €</span>
+                                        <span class="fw-bolder text-primary">$ {{ number_format($detail['prix_total'], 2, ',', ' ') }}</span>
                                     @endif
                                 </td>
                             </tr>
@@ -171,7 +171,7 @@
                             <tr class="border-top-2">
                                 <td colspan="4" class="text-end fw-bolder fs-5">Prix estimé total:</td>
                                 <td class="text-end fw-bolder fs-4 text-success">
-                                    {{ number_format($packageRequest->calculateEstimatedPrice(), 2, ',', ' ') }} €
+                                    {{ number_format($packageRequest->calculateEstimatedPrice(), 2, ',', ' ') }} $
                                 </td>
                             </tr>
                         </tfoot>
@@ -264,21 +264,21 @@
                 @if($packageRequest->budget_estime)
                 <div class="mb-5">
                     <div class="fw-bold text-gray-600 mb-2">Budget du client</div>
-                    <div class="text-gray-800 fw-bolder fs-5">{{ number_format($packageRequest->budget_estime, 2, ',', ' ') }} €</div>
+                    <div class="text-gray-800 fw-bolder fs-5">$ {{ number_format($packageRequest->budget_estime, 2, ',', ' ') }}</div>
                 </div>
                 @endif
 
                 @if($packageRequest->prix_propose)
                 <div class="mb-5">
                     <div class="fw-bold text-gray-600 mb-2">Prix proposé</div>
-                    <div class="text-primary fw-bolder fs-4">{{ number_format($packageRequest->prix_propose, 2, ',', ' ') }} €</div>
+                    <div class="text-primary fw-bolder fs-4">$ {{ number_format($packageRequest->prix_propose, 2, ',', ' ') }}</div>
                 </div>
                 @endif
 
                 @if($packageRequest->prix_final)
                 <div class="mb-5">
                     <div class="fw-bold text-gray-600 mb-2">Prix final</div>
-                    <div class="text-success fw-bolder fs-3">{{ number_format($packageRequest->prix_final, 2, ',', ' ') }} €</div>
+                    <div class="text-success fw-bolder fs-3">$ {{ number_format($packageRequest->prix_final, 2, ',', ' ') }}</div>
                 </div>
                 @endif
 

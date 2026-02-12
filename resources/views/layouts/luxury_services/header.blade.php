@@ -120,7 +120,7 @@
                             </h3>
                         </div>
                         <div class="scroll-y mh-325px my-5 px-8">
-                            @forelse(\App\Models\LuxuryPackageRequest::where('statut', 'nouvelle')->latest()->take(5)->get() as $notification)
+                            @forelse (\App\Models\LuxuryPackageRequest::where('statut', 'nouvelle')->latest()->take(5)->get() as $notification)
                                 <div class="d-flex flex-stack py-4">
                                     <div class="d-flex align-items-center">
                                         <div class="symbol symbol-35px me-4">

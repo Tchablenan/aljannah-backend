@@ -105,12 +105,12 @@
                 <div class="card-body d-flex align-items-center">
                     <div class="symbol symbol-50px me-5">
                         <span class="symbol-label bg-light-info">
-                            <i class="bi bi-currency-euro fs-1 text-info"></i>
+                            <i class="bi bi-currency-dollar fs-1 text-info"></i>
                         </span>
                     </div>
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center mb-2">
-                            <span class="fs-2hx fw-bolder text-gray-800 me-2">{{ number_format($kpis['estimated_revenue']['value'], 0, ',', ' ') }}GH₵</span>
+                            <span class="fs-2hx fw-bolder text-gray-800 me-2">$ {{ number_format($kpis['estimated_revenue']['value'], 0, ',', ' ') }}</span>
                         </div>
                         <span class="text-muted fw-bold fs-6">Revenus Estimés ce Mois</span>
                     </div>
@@ -167,7 +167,7 @@
                     </h3>
                 </div>
                 <div class="card-body py-3">
-                    @forelse($top_performers['most_booked_jets'] as $index => $jet)
+                    @forelse ($top_performers['most_booked_jets'] as $index => $jet)
                         <div class="d-flex align-items-center mb-6">
                             <div class="symbol symbol-40px me-5">
                                 <span class="symbol-label bg-light-{{ ['primary', 'success', 'warning', 'info', 'dark'][$index] }}">
@@ -205,7 +205,7 @@
                     </div>
                 </div>
                 <div class="card-body py-3">
-                    @forelse($recent_activity['recent_reservations'] as $reservation)
+                    @forelse ($recent_activity['recent_reservations'] as $reservation)
                         <div class="d-flex align-items-center mb-6">
                             <div class="symbol symbol-40px me-4">
                                 <span class="symbol-label bg-light-{{ $reservation['status'] == 'confirmed' ? 'success' : ($reservation['status'] == 'pending' ? 'warning' : 'danger') }}">

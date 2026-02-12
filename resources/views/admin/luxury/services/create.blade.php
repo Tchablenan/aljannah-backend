@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/services/create.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', 'Nouveau Service de Luxe')
 

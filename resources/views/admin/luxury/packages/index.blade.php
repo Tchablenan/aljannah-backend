@@ -1,6 +1,6 @@
 {{-- resources/views/admin/luxury/packages/index.blade.php --}}
 
-@extends('layouts.luxery_services.app')
+@extends('layouts.luxury_services.app')
 
 @section('title', 'Packages de Luxe')
 
@@ -188,9 +188,9 @@
                             </td>
                             <td>
                                 @if($package->prix_total)
-                                    <span class="text-dark fw-bolder fs-6">{{ number_format($package->prix_total, 2, ',', ' ') }} €</span>
+                                    <span class="text-dark fw-bolder fs-6">$ {{ number_format($package->prix_total, 2, ',', ' ') }}</span>
                                 @elseif($package->prix_estime)
-                                    <span class="text-muted fw-bold fs-7">~{{ number_format($package->prix_estime, 2, ',', ' ') }} €</span>
+                                    <span class="text-muted fw-bold fs-7">~$ {{ number_format($package->prix_estime, 2, ',', ' ') }}</span>
                                 @else
                                     <span class="text-gray-600">Sur devis</span>
                                 @endif
