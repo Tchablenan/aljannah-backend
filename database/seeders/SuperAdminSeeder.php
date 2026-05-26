@@ -19,7 +19,7 @@ class SuperAdminSeeder extends Seeder
             ['email' => 'admin.booking@aljannahjet.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('supersecurepassword'), // Assurez-vous que le mot de passe est crypté
+                'password' => Hash::make('Meinouss@2.0'), // Assurez-vous que le mot de passe est crypté
                 'is_admin' => true,  // Marquer cet utilisateur comme administrateur
             ]
         );
