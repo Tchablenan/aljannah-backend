@@ -15,11 +15,13 @@ class SuperAdminSeeder extends Seeder
     public function run(): void
     {
                 // Créez un super utilisateur avec un email spécifique
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@example.com',
-            'password' => Hash::make('supersecurepassword'), // Assurez-vous que le mot de passe est crypté
-            'is_admin' => true,  // Marquer cet utilisateur comme administrateur
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin.booking@aljannahjet.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('supersecurepassword'), // Assurez-vous que le mot de passe est crypté
+                'is_admin' => true,  // Marquer cet utilisateur comme administrateur
+            ]
+        );
     }
 }
