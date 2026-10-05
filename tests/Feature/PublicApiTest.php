@@ -79,6 +79,20 @@ class PublicApiTest extends TestCase
             ->assertJsonPath('data.reference', $reference);
     }
 
+    public function test_cors_allows_the_vercel_frontend(): void
+    {
+        $this->makeJet();
+
+        foreach (['https://projet-aljannah.vercel.app', 'https://projet-aljannah-git-main-tchablenan.vercel.app'] as $origin) {
+            $this->getJson('/api/jets', ['Origin' => $origin])
+                ->assertOk()
+                ->assertHeader('Access-Control-Allow-Origin', $origin);
+        }
+
+        $this->getJson('/api/jets', ['Origin' => 'https://evil.vercel.app'])
+            ->assertHeaderMissing('Access-Control-Allow-Origin');
+    }
+
     public function test_reservation_requires_data_protection_consent(): void
     {
         $jet = $this->makeJet();

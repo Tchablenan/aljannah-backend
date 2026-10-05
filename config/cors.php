@@ -19,9 +19,23 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5174', 'http://127.0.0.1:5174', 'https://aljannahjet.com', 'https://www.aljannahjet.com', ],
+    // Origines du site public. Ajoutez-en via CORS_ALLOWED_ORIGINS dans .env
+    // (liste séparée par des virgules), sans redéployer le code.
+    'allowed_origins' => array_values(array_filter(array_merge(
+        [
+            'http://localhost:5174',
+            'http://127.0.0.1:5174',
+            'https://aljannahjet.com',
+            'https://www.aljannahjet.com',
+            'https://projet-aljannah.vercel.app',
+        ],
+        array_map('trim', explode(',', (string) env('CORS_ALLOWED_ORIGINS', '')))
+    ))),
 
-    'allowed_origins_patterns' => [],
+    // Déploiements de prévisualisation Vercel du projet (projet-aljannah-xxx.vercel.app)
+    'allowed_origins_patterns' => [
+        '#^https://projet-aljannah(-[a-z0-9-]+)?\.vercel\.app$#',
+    ],
 
     'allowed_headers' => ['*'],
 
