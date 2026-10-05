@@ -9,9 +9,11 @@
             <h1 class="text-dark mb-3">Connexion Aljannah</h1>
             <!--end::Title-->
             <!--begin::Link-->
+            @if (config('auth.allow_registration'))
             <div class="text-gray-400 fw-bold fs-4">Nouveau ici ?
                 <a href="{{ route('register') }}" class="link-primary fw-bolder">Créer un compte</a>
             </div>
+            @endif
             <!--end::Link-->
         </div>
         <!--begin::Heading-->

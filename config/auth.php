@@ -112,4 +112,20 @@ return [
 
     'password_timeout' => 10800,
 
+    /*
+    | Inscription publique (/register). Fermée par défaut : les comptes du
+    | back-office sont créés par SuperAdminSeeder ou par un administrateur.
+    */
+    'allow_registration' => env('ALLOW_REGISTRATION', false),
+
+    /*
+    | Super administrateur créé par SuperAdminSeeder (à chaque démarrage du
+    | conteneur). Ne jamais mettre ces valeurs dans le code : dépôt public.
+    */
+    'super_admin' => [
+        'name' => env('ADMIN_NAME', 'Super Admin'),
+        'email' => env('ADMIN_EMAIL'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
+
 ];

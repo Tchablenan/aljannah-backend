@@ -413,21 +413,7 @@ public function dashboard()
             'demandes_recentes' => LuxuryPackageRequest::with(['package'])
                                                        ->orderBy('created_at', 'desc')
                                                        ->limit(5)
-                                                       ->get()
-                                                       ->map(function($demande) {
-                                                           return [
-                                                               'id' => $demande->id,
-                                                               'reference' => $demande->reference,
-                                                               'client' => $demande->client_nom_complet,
-                                                               'statut' => $demande->statut,
-                                                               'statut_display' => $demande->statut_display,
-                                                               'statut_color' => $demande->statut_color,
-                                                               'priorite' => $demande->priorite,
-                                                               'priorite_color' => $demande->priorite_color,
-                                                               'prix' => $demande->prix_propose ?? $demande->budget_estime,
-                                                               'created_at' => $demande->created_at
-                                                           ];
-                                                       }),
+                                                       ->get(),
 
             // Répartition par statut (avec les bons statuts)
             'demandes_par_statut' => LuxuryPackageRequest::select('statut', DB::raw('count(*) as total'))
@@ -470,7 +456,7 @@ public function dashboard()
             // Top clients
             'top_clients' => LuxuryPackageRequest::select('client_email', 'client_nom', 'client_prenom')
                                                  ->selectRaw('COUNT(*) as nb_demandes')
-                                                 ->selectRaw('SUM(CASE WHEN statut = "confirme" THEN prix_final ELSE 0 END) as total_achats')
+                                                 ->selectRaw("SUM(CASE WHEN statut = 'confirme' THEN prix_final ELSE 0 END) as total_achats")
                                                  ->groupBy('client_email', 'client_nom', 'client_prenom')
                                                  ->orderBy('total_achats', 'desc')
                                                  ->limit(5)

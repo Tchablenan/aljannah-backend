@@ -239,7 +239,7 @@
                         <div class="d-flex align-items-center">
                             @if($reservation->jet->image)
                             <div class="symbol symbol-30px me-3">
-                                <img src="{{ asset('storage/' . $reservation->jet->image) }}"
+                                <img src="{{ Storage::disk('public')->url($reservation->jet->image) }}"
                                     alt="{{ $reservation->jet->nom }}" class="w-100" />
                             </div>
                             @endif

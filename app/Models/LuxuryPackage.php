@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LuxuryPackage extends Model
@@ -87,7 +88,7 @@ class LuxuryPackage extends Model
      */
     public function getImagePrincipaleUrlAttribute()
     {
-        return $this->image_principale ? asset('storage/luxury-packages/' . $this->image_principale) : null;
+        return $this->image_principale ? Storage::disk('public')->url('luxury-packages/' . $this->image_principale) : null;
     }
 
     public function getGalerieImagesUrlsAttribute()
@@ -95,7 +96,7 @@ class LuxuryPackage extends Model
         if (!$this->galerie_images) return [];
         
         return collect($this->galerie_images)->map(function ($image) {
-            return asset('storage/luxury-packages/' . $image);
+            return Storage::disk('public')->url('luxury-packages/' . $image);
         })->toArray();
     }
 

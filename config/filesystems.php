@@ -36,7 +36,22 @@ return [
             'throw' => false,
         ],
 
-        'public' => [
+        // Disque des images (jets, services, packages).
+        // PUBLIC_DISK_DRIVER=s3 : stockage externe compatible S3 (Supabase Storage,
+        // Cloudflare R2, Backblaze B2…), indispensable sur un hébergeur dont le
+        // disque est effacé à chaque redéploiement (Render, Railway…).
+        'public' => env('PUBLIC_DISK_DRIVER', 'local') === 's3' ? [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
+            'visibility' => 'public',
+            'throw' => false,
+        ] : [
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',

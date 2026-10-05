@@ -167,7 +167,7 @@
                                     <a href="{{ route('jets.show', $jet) }}">
                                         @if($jet->image)
                                             <div class="symbol-label">
-                                                <img src="{{ asset('storage/' . $jet->image) }}" alt="{{ $jet->nom }}" class="w-100"/>
+                                                <img src="{{ Storage::disk('public')->url($jet->image) }}" alt="{{ $jet->nom }}" class="w-100"/>
                                             </div>
                                         @else
                                             <div class="symbol-label bg-light-primary">

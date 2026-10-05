@@ -3,24 +3,34 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class SuperAdminSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Crée ou met à jour le super administrateur à partir des variables
+     * ADMIN_EMAIL et ADMIN_PASSWORD (jamais de mot de passe dans le code :
+     * le dépôt est public).
      */
     public function run(): void
     {
-                // Créez un super utilisateur avec un email spécifique
+        // Lu via config/auth.php : env() est vide une fois la config mise en cache
+        $admin = config('auth.super_admin');
+        $email = $admin['email'] ?? null;
+        $password = $admin['password'] ?? null;
+
+        if (!$email || !$password) {
+            $this->command?->warn('ADMIN_EMAIL / ADMIN_PASSWORD non définis : super admin non créé.');
+            return;
+        }
+
         User::updateOrCreate(
-            ['email' => 'admin.booking@aljannahjet.com'],
+            ['email' => $email],
             [
-                'name' => 'Super Admin',
-                'password' => Hash::make('Meinouss@2.0'), // Assurez-vous que le mot de passe est crypté
-                'is_admin' => true,  // Marquer cet utilisateur comme administrateur
+                'name' => $admin['name'] ?? 'Super Admin',
+                'password' => Hash::make($password),
+                'is_admin' => true,
             ]
         );
     }

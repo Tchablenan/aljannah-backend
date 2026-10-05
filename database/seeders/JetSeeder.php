@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Jet;
+use Illuminate\Support\Facades\Storage;
 
 class JetSeeder extends Seeder
 {
@@ -92,8 +93,22 @@ class JetSeeder extends Seeder
             ],
         ];
 
+        $disk = Storage::disk('public');
+
         foreach ($jets as $jetData) {
-            Jet::updateOrCreate(
+            // Le cast "array" du modèle encode déjà en JSON
+            $images = is_string($jetData['images'] ?? null)
+                ? json_decode($jetData['images'], true)
+                : ($jetData['images'] ?? []);
+
+            // Sur une installation neuve, les fichiers d'exemple n'existent pas :
+            // on n'enregistre que les images réellement présentes sur le disque.
+            $jetData['images'] = array_values(array_filter($images ?? [], fn ($path) => $disk->exists($path)));
+            if (!empty($jetData['image']) && !$disk->exists($jetData['image'])) {
+                $jetData['image'] = null;
+            }
+
+            Jet::firstOrCreate(
                 ['nom' => $jetData['nom']],
                 $jetData
             );

@@ -394,7 +394,7 @@ class LuxuryServiceApiController extends Controller
     {
         $stats = LuxuryService::select('categorie', 
                                       DB::raw('count(*) as total'),
-                                      DB::raw('sum(case when actif = 1 then 1 else 0 end) as actifs'))
+                                      DB::raw('sum(case when actif = true then 1 else 0 end) as actifs'))
                               ->groupBy('categorie')
                               ->get()
                               ->map(function($item) {

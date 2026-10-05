@@ -228,11 +228,7 @@ class DashboardController extends Controller
 
     private function getMonthlyReservations()
     {
-        $monthlyData = Reservation::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
-                                 ->whereYear('created_at', Carbon::now()->year)
-                                 ->groupBy('month')
-                                 ->pluck('count', 'month')
-                                 ->toArray();
+        $monthlyData = $this->countThisYearByMonth();
 
         $result = [];
         for ($i = 1; $i <= 12; $i++) {
@@ -254,27 +250,39 @@ class DashboardController extends Controller
 
     private function getAverageReservationsPerMonth()
     {
-        $average = Reservation::select(
-            DB::raw('COUNT(*) / COUNT(DISTINCT DATE_FORMAT(created_at, "%Y-%m")) as average')
-        )->value('average');
+        // Calcul en PHP : DATE_FORMAT n'existe que sur MySQL
+        $months = Reservation::pluck('created_at')
+                             ->map(fn ($date) => $date->format('Y-m'))
+                             ->unique()
+                             ->count();
 
-        return round($average ?? 0, 2);
+        return $months ? round(Reservation::count() / $months, 2) : 0;
     }
 
     private function getPeakMonths()
     {
-        return Reservation::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
-                         ->whereYear('created_at', Carbon::now()->year)
-                         ->groupBy('month')
-                         ->orderByDesc('count')
+        return collect($this->countThisYearByMonth())
+                         ->sortDesc()
                          ->take(3)
-                         ->get()
-                         ->map(function ($item) {
+                         ->map(function ($count, $month) {
                              return [
-                                 'month' => Carbon::create()->month($item->month)->format('F'),
-                                 'count' => $item->count
+                                 'month' => Carbon::create()->month($month)->format('F'),
+                                 'count' => $count
                              ];
-                         });
+                         })
+                         ->values();
+    }
+
+    /**
+     * Nombre de réservations par mois (1-12) pour l'année en cours.
+     * Groupé en PHP pour fonctionner sur MySQL, PostgreSQL et SQLite.
+     */
+    private function countThisYearByMonth(): array
+    {
+        return Reservation::whereYear('created_at', Carbon::now()->year)
+                          ->pluck('created_at')
+                          ->countBy(fn ($date) => (int) $date->format('n'))
+                          ->all();
     }
 
     private function getUpcomingDepartures()
@@ -290,14 +298,14 @@ class DashboardController extends Controller
 
     private function getJetsByCapacity()
     {
-        return Jet::selectRaw('
+        return Jet::selectRaw("
                 CASE 
-                    WHEN capacite <= 6 THEN "Light (1-6)"
-                    WHEN capacite <= 12 THEN "Mid-size (7-12)"
-                    ELSE "Heavy (13+)"
+                    WHEN capacite <= 6 THEN 'Light (1-6)'
+                    WHEN capacite <= 12 THEN 'Mid-size (7-12)'
+                    ELSE 'Heavy (13+)'
                 END as capacity_range,
                 COUNT(*) as count
-            ')
+            ")
             ->groupBy('capacity_range')
             ->pluck('count', 'capacity_range')
             ->toArray();
@@ -428,7 +436,9 @@ class DashboardController extends Controller
         return Jet::withCount(['reservations' => function ($query) {
                     $query->where('status', '!=', 'cancelled');
                 }])
-                ->having('reservations_count', '>', 0)
+                ->whereHas('reservations', function ($query) {
+                    $query->where('status', '!=', 'cancelled');
+                })
                 ->orderByDesc('reservations_count')
                 ->take(5)
                 ->get(['nom', 'modele', 'reservations_count']);
@@ -437,7 +447,7 @@ class DashboardController extends Controller
     private function getBusiestRoutes()
     {
         return Reservation::select(
-                    DB::raw('CONCAT(departure_location, " → ", arrival_location) as route'),
+                    DB::raw("CONCAT(departure_location, ' → ', arrival_location) as route"),
                     DB::raw('COUNT(*) as count')
                 )
                 ->where('status', '!=', 'cancelled')

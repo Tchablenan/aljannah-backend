@@ -1,0 +1,70 @@
+# Blueprint Render : https://render.com/docs/blueprint-spec
+# Render > New > Blueprint > choisir ce dépôt. Les valeurs "sync: false"
+# sont demandées à la création (base de données, admin, stockage des images).
+services:
+  - type: web
+    name: aljannah-backend
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/jets/price-range
+    envVars:
+      - key: APP_NAME
+        value: Aljannah Jet
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        sync: false # ex. https://aljannah-backend.onrender.com
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+
+      # Base de données PostgreSQL (ex. Neon, gratuit) : URL complète avec ?sslmode=require
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        sync: false
+
+      # Compte super administrateur du back-office
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      # Mettre à true pour le premier déploiement (jets d'exemple), puis false
+      - key: SEED_DEMO_JETS
+        value: "false"
+
+      # Site public autorisé à appeler l'API (en plus de ceux de config/cors.php)
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+      # Images (jets, services) : stockage S3 compatible, sinon perdues à chaque redéploiement
+      - key: PUBLIC_DISK_DRIVER
+        value: s3
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_DEFAULT_REGION
+        sync: false
+      - key: AWS_BUCKET
+        sync: false
+      - key: AWS_ENDPOINT
+        sync: false
+      - key: AWS_URL
+        sync: false
+
+      # Emails de confirmation (optionnel, ex. Brevo SMTP gratuit) ; "log" = pas d'envoi
+      - key: MAIL_MAILER
+        value: log
+      - key: MAIL_FROM_ADDRESS
+        sync: false

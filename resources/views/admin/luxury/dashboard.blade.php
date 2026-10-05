@@ -339,19 +339,19 @@
                     @foreach($stats['demandes_recentes'] as $demande)
                     <div class="d-flex align-items-center mb-7">
                         <div class="symbol symbol-50px me-5">
-                            <span class="symbol-label bg-light-{{ $demande->status_color ?? 'primary' }}">
-                                <span class="svg-icon svg-icon-2x svg-icon-{{ $demande->status_color ?? 'primary' }}">
-                                    @if($demande->status === 'nouvelle')
+                            <span class="symbol-label bg-light-{{ $demande->statut_color ?? 'primary' }}">
+                                <span class="svg-icon svg-icon-2x svg-icon-{{ $demande->statut_color ?? 'primary' }}">
+                                    @if($demande->statut === 'nouvelle')
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path opacity="0.3" d="M12 22C13.6569 22 15 20.6569 15 19C15 17.3431 13.6569 16 12 16C10.3431 16 9 17.3431 9 19C9 20.6569 10.3431 22 12 22Z" fill="black"/>
                                             <path d="M19 15V18C19 18.6 18.6 19 18 19H6C5.4 19 5 18.6 5 18V15C6.1 15 7 14.1 7 13V10C7 7.8 8.8 6 11 6C11.3 6 11.7 6.1 12 6.2C12.3 6.1 12.7 6 13 6C15.2 6 17 7.8 17 10V13C17 14.1 17.9 15 19 15Z" fill="black"/>
                                         </svg>
-                                    @elseif($demande->status === 'en_cours')
+                                    @elseif($demande->statut === 'en_cours')
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path opacity="0.3" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="black"/>
                                             <path d="M12 6V12L16 14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         </svg>
-                                    @elseif($demande->status === 'terminee')
+                                    @elseif($demande->statut === 'termine')
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path opacity="0.3" d="M20.5543 4.37824L12.1798 2.02473C12.0626 1.99176 11.9376 1.99176 11.8203 2.02473L3.44572 4.37824C3.18118 4.45258 3 4.6807 3 4.93945V13.569C3 14.6914 3.48509 15.8404 4.4417 16.984C5.17231 17.8575 6.18314 18.7345 7.446 19.5909C9.56752 21.0295 11.6566 21.912 11.7445 21.9488C11.8258 21.9829 11.9129 22 12.0001 22C12.0872 22 12.1744 21.983 12.2557 21.9488C12.3435 21.912 14.4326 21.0295 16.5541 19.5909C17.8169 18.7345 18.8277 17.8575 19.5584 16.984C20.515 15.8404 21 14.6914 21 13.569V4.93945C21 4.6807 20.8189 4.45258 20.5543 4.37824Z" fill="black"/>
                                             <path d="M10.5606 11.3042L9.57283 10.3018C9.28174 10.0065 8.80522 10.0065 8.51412 10.3018C8.22897 10.5912 8.22897 11.0559 8.51412 11.3452L10.4182 13.2773C10.8255 13.6747 11.5 13.6747 11.9073 13.2773L15.4857 9.58639C15.771 9.29702 15.771 8.83242 15.4857 8.54305C15.1946 8.24775 14.7181 8.24775 14.427 8.54305L10.5606 11.3042Z" fill="black"/>
@@ -370,12 +370,12 @@
                                 {{ $demande->package->nom ?? 'Demande personnalisée' }}
                             </a>
                             <span class="text-muted fw-bold fs-7">
-                                {{ $demande->client_nom }} - {{ $demande->created_at->diffForHumans() }}
+                                {{ $demande->client_nom_complet }} - {{ $demande->created_at->diffForHumans() }}
                             </span>
                         </div>
                         <div class="ms-auto">
-                            <span class="badge badge-light-{{ $demande->status_color ?? 'primary' }}">
-                                {{ $demande->status_display ?? ucfirst($demande->status) }}
+                            <span class="badge badge-light-{{ $demande->statut_color ?? 'primary' }}">
+                                {{ $demande->statut_display }}
                             </span>
                         </div>
                     </div>

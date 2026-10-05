@@ -57,7 +57,7 @@ class Jet extends Model
     // Accesseurs pour les images
     public function getImageUrlAttribute()
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $this->image ? Storage::disk('public')->url($this->image) : null;
     }
 
     public function getImagesUrlsAttribute()
@@ -66,7 +66,7 @@ class Jet extends Model
             return [];
 
         return collect($this->images)->map(function ($image) {
-            return asset('storage/' . $image);
+            return Storage::disk('public')->url($image);
         })->toArray();
     }
 

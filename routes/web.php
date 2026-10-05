@@ -25,13 +25,18 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class , 'index'])
-     ->middleware(['auth', 'verified'])
+     ->middleware(['auth', 'verified', 'admin'])
      ->name('dashboard');
 
+// Profil de l'utilisateur connecté
 Route::middleware('auth')->group(function () {
      Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
      Route::patch('/profile', [ProfileController::class , 'update'])->name('profile.update');
      Route::delete('/profile', [ProfileController::class , 'destroy'])->name('profile.destroy');
+});
+
+// Back-office : réservé aux administrateurs
+Route::middleware(['auth', 'admin'])->group(function () {
 
      // Routes for Reservation management
      Route::resource('reservations', ReservationController::class);

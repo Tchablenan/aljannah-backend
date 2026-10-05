@@ -12,7 +12,9 @@ class TrustProxies extends Middleware
      *
      * @var array<int, string>|string|null
      */
-    protected $proxies;
+    // Hébergeurs comme Render terminent le HTTPS devant l'application :
+    // on fait confiance à leur proxy pour générer des URLs en https.
+    protected $proxies = '*';
 
     /**
      * The headers that should be used to detect proxies.

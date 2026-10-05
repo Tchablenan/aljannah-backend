@@ -59,10 +59,10 @@
                 <div class="card-body text-center pt-0">
                     <!--begin::Image input-->
                     <div class="image-input image-input-outline image-input-placeholder mb-3" data-kt-image-input="true" 
-                         style="background-image: url('{{ $jet->image ? asset('storage/' . $jet->image) : asset('assets/media/svg/files/blank-image.svg') }}')">
+                         style="background-image: url('{{ $jet->image ? Storage::disk('public')->url($jet->image) : asset('assets/media/svg/files/blank-image.svg') }}')">
                         <!--begin::Preview existing avatar-->
                         <div class="image-input-wrapper w-150px h-150px" 
-                             style="background-image: url('{{ $jet->image ? asset('storage/' . $jet->image) : asset('assets/media/svg/files/blank-image.svg') }}')"></div>
+                             style="background-image: url('{{ $jet->image ? Storage::disk('public')->url($jet->image) : asset('assets/media/svg/files/blank-image.svg') }}')"></div>
                         <!--end::Preview existing avatar-->
                         <!--begin::Label-->
                         <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Changer l'image">
@@ -388,7 +388,7 @@
                                 @foreach($jet->images as $index => $image)
                                     <div class="position-relative">
                                         <div class="symbol symbol-100px">
-                                            <img src="{{ asset('storage/' . $image) }}" alt="Image {{ $index + 1 }}" class="w-100 h-100 object-fit-cover rounded" />
+                                            <img src="{{ Storage::disk('public')->url($image) }}" alt="Image {{ $index + 1 }}" class="w-100 h-100 object-fit-cover rounded" />
                                         </div>
                                         <button type="button" class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow position-absolute top-0 end-0" onclick="removeCurrentImage({{ $index }})" title="Supprimer cette image">
                                             <i class="bi bi-x fs-2"></i>

@@ -55,7 +55,7 @@
                         <!--begin::Avatar-->
                         <div class="symbol symbol-100px symbol-circle mb-7">
                             @if($jet->image)
-                                <img src="{{ asset('storage/' . $jet->image) }}" alt="{{ $jet->nom }}" />
+                                <img src="{{ Storage::disk('public')->url($jet->image) }}" alt="{{ $jet->nom }}" />
                             @else
                                 <div class="symbol-label bg-light-primary">
                                     <span class="svg-icon svg-icon-3x svg-icon-primary">
@@ -252,10 +252,10 @@
                                                 <!--begin::Card body-->
                                                 <div class="card-body d-flex justify-content-center text-center flex-column p-8">
                                                     <!--begin::Name-->
-                                                    <a href="{{ asset('storage/' . $image) }}" class="text-gray-800 text-hover-primary d-flex flex-column" data-fslightbox="gallery">
+                                                    <a href="{{ Storage::disk('public')->url($image) }}" class="text-gray-800 text-hover-primary d-flex flex-column" data-fslightbox="gallery">
                                                         <!--begin::Image-->
                                                         <div class="symbol symbol-75px mx-auto mb-5">
-                                                            <img src="{{ asset('storage/' . $image) }}" alt="Image {{ $index + 1 }}" class="w-100 h-100 object-fit-cover" />
+                                                            <img src="{{ Storage::disk('public')->url($image) }}" alt="Image {{ $index + 1 }}" class="w-100 h-100 object-fit-cover" />
                                                         </div>
                                                         <!--end::Image-->
                                                         <!--begin::Info-->

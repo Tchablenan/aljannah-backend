@@ -224,7 +224,7 @@
                                         <div class="d-flex align-items-center">
                                             @if($service->image)
                                                 <div class="symbol symbol-45px me-3">
-                                                    <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->nom }}" />
+                                                    <img src="{{ Storage::disk('public')->url($service->image) }}" alt="{{ $service->nom }}" />
                                                 </div>
                                             @endif
                                             <div class="d-flex flex-column">
