@@ -34,8 +34,8 @@ class JetApiController extends Controller
         }
 
         $jets = $query->select([
-            'id', 'nom', 'modele', 'capacite', 'prix', 
-            'image', 'localisation', 'categorie'
+            'id', 'nom', 'modele', 'capacite', 'prix',
+            'image', 'images', 'description', 'localisation', 'categorie'
         ])->paginate(12);
 
         // Transformer les données pour l'API
@@ -45,6 +45,7 @@ class JetApiController extends Controller
                 'nom' => $jet->nom,
                 'modele' => $jet->modele,
                 'capacite' => $jet->capacite,
+                'description' => $jet->description,
                 'prix' => $jet->prix,
                 'localisation' => $jet->localisation,
                 'categorie' => $jet->categorie,

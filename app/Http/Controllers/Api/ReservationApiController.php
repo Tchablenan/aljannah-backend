@@ -82,12 +82,7 @@ class ReservationApiController extends Controller
 
             // Send notification to the user
             try {
-                Notification::send(null, new ReservationCreatedNotification($reservation));
-                // Note: Notification::route('mail', $reservation->email) is also valid,
-                // but static Notification::route doesn't exist in all Laravel versions the same way.
-                // Using Notification facade with route property or simple user notify if auth enabled.
-                // Re-verifying how I did it before.
-                \Illuminate\Support\Facades\Notification::route('mail', $reservation->email)
+                Notification::route('mail', $reservation->email)
                     ->notify(new ReservationCreatedNotification($reservation));
             }
             catch (\Exception $e) {
@@ -112,7 +107,7 @@ class ReservationApiController extends Controller
             Log::error("Erreur API Réservation: " . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la création de la réservation: ' . $e->getMessage()
+                'message' => 'Erreur lors de la création de la réservation. Veuillez réessayer plus tard.'
             ], 500);
         }
     }
@@ -142,7 +137,7 @@ class ReservationApiController extends Controller
             'success' => true,
             'data' => [
                 'id' => $reservation->id,
-                'reference' => 'REF-' . str_pad($reservation->id, 6, '0', STR_PAD_LEFT),
+                'reference' => $reservation->reference,
                 'full_name' => $reservation->full_name,
                 'email' => $reservation->email,
                 'departure_location' => $reservation->departure_location,

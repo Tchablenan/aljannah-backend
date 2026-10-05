@@ -38,7 +38,6 @@ Route::middleware('auth')->group(function () {
      Route::patch('reservations/{reservation}/status', [ReservationController::class , 'updateStatus'])->name('reservations.updateStatus');
      Route::get('reservations/{reservation}/confirmation', [ReservationController::class , 'confirmation'])->name('reservations.confirmation');
      Route::get('/reservations/{reservation}/pdf', [ReservationController::class , 'downloadPDF'])->name('reservations.pdf');
-     Route::resource('jets', JetController::class);
 
      // Routes for Jets management
      Route::resource('jets', JetController::class);
@@ -103,12 +102,7 @@ Route::middleware('auth')->group(function () {
      Route::delete('luxury-packages/{package}/remove-service', [LuxuryPackageController::class , 'removeService'])
           ->name('admin.luxury.packages.remove-service');
 
-     //Ajouter ces routes en plus du resource
-
      Route::get('admin/luxury/packages-export', [LuxuryPackageController::class , 'export'])->name('admin.luxury.packages.export');
-     Route::post('admin/luxury/packages/{package}/duplicate', [LuxuryPackageController::class , 'duplicate'])->name('admin.luxury.packages.duplicate');
-     Route::patch('admin/luxury/packages/{package}/toggle-status', [LuxuryPackageController::class , 'toggleStatus'])->name('admin.luxury.packages.toggle-status');
-     Route::patch('admin/luxury/packages/{package}/toggle-visibility', [LuxuryPackageController::class , 'toggleVisibility'])->name('admin.luxury.packages.toggle-visibility');
 
      // LUXURY REQUESTS - Gestion des demandes
      Route::resource('luxury-requests', LuxuryPackageRequestController::class , [
@@ -137,12 +131,6 @@ Route::middleware('auth')->group(function () {
      Route::get('luxury-requests/export', [LuxuryPackageRequestController::class , 'export'])
           ->name('admin.luxury.requests.export');
 
-     // Dans routes/web.php
-     Route::put('reservations/{reservation}', [ReservationController::class , 'updateStatus'])->name('reservations.updateStatus');
-
-     // Routes publiques
-     Route::get('check-status', [ReservationController::class , 'checkStatusPage'])->name('reservations.check-status');
-     Route::post('check-status', [ReservationController::class , 'checkStatus']);
      Route::post('reservations/{reservation}/cancel', [ReservationController::class , 'cancelReservation'])->name('reservations.cancel');
 
 

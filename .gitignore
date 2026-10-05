@@ -17,3 +17,9 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Fichiers de debug locaux
+recent_logs.txt
+test_output.txt
+test_reservation.php
+error_page.html
